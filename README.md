@@ -1,12 +1,15 @@
 # MindX Engineer Onboarding - Week 1
 
-Full-stack Node.js API and React application deployed to Azure Kubernetes Service (AKS).
+Full-stack application with React frontend and Node.js API backend deployed to Azure Kubernetes Service (AKS).
 
 ## Architecture
 
+- **Frontend:** React + TypeScript (Vite) served with nginx
 - **Backend API:** Node.js/TypeScript Express server
-- **Container Registry:** Azure Container Registry
-- **Deployment:** Azure Web App + Azure Kubernetes Service (AKS)
+- **Container Registry:** Azure Container Registry (ACR)
+- **Orchestration:** Azure Kubernetes Service (AKS)
+- **Ingress:** NGINX Ingress Controller for path-based routing
+- **Deployment:** Azure Web App (backend only) + AKS (full-stack)
 
 ## Project Structure
 
@@ -18,6 +21,22 @@ Week01/
 │   ├── Dockerfile          # Multi-stage Docker build
 │   ├── package.json
 │   └── tsconfig.json
+├── frontend/                # React Web App
+│   ├── src/
+│   │   ├── api/
+│   │   │   └── client.ts   # API client for backend
+│   │   ├── App.tsx         # Main React component
+│   │   └── main.tsx        # Entry point
+│   ├── Dockerfile          # Multi-stage build (Node.js + nginx)
+│   ├── nginx.conf          # SPA routing configuration
+│   ├── package.json
+│   └── tsconfig.json
+├── k8s/                     # Kubernetes manifests
+│   ├── backend-deployment.yaml
+│   ├── backend-service.yaml
+│   ├── backend-ingress.yaml
+│   ├── frontend-deployment.yaml
+│   └── frontend-service.yaml
 ├── .gitignore
 └── README.md
 ```
@@ -27,6 +46,8 @@ Week01/
 - Node.js 18+
 - Docker Desktop
 - Azure CLI (`az`)
+- kubectl
+- Helm
 - Git
 
 ## Local Development
@@ -41,12 +62,37 @@ npm run dev
 
 API will be available at `http://localhost:3000`
 
-### 2. Build Docker Image
+**Endpoints:**
+- `GET /api/health` → `{"status":"ok"}`
+- `GET /api/` → `"Hello from Backend API!"`
+
+### 2. Run Frontend Locally
 
 ```bash
-cd backend
-docker build -t backend:latest .
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend will be available at `http://localhost:5173`
+
+**Note:** Update `frontend/.env` to point to your backend:
+```
+VITE_API_URL=http://localhost:3000
+```
+
+### 3. Build Docker Images
+
+**Backend:**
+```bash
+docker build -t backend:latest ./backend
 docker run -p 3000:3000 backend:latest
+```
+
+**Frontend:**
+```bash
+docker build -t frontend:latest ./frontend
+docker run -p 80:80 frontend:latest
 ```
 
 ## Azure Deployment
@@ -199,29 +245,106 @@ curl http://<EXTERNAL-IP>/health
 
 ---
 
-## API Endpoints
+## Step 4: React Web App Deployment
 
-### Azure Web App (Step 1)
+### Prerequisites
+- Completed Steps 1-3
+- Frontend and backend images in ACR
+- AKS cluster with Ingress Controller
+
+### 4.1 Deploy Frontend to AKS
+
+```bash
+# Apply frontend deployment
+kubectl apply -f k8s/frontend-deployment.yaml
+
+# Apply frontend service
+kubectl apply -f k8s/frontend-service.yaml
+
+# Verify
+kubectl get pods -l app=frontend
+```
+
+### 4.2 Update Ingress for Full-Stack Routing
+
+The Ingress is configured for path-based routing:
+- `/api/*` → Backend Service
+- `/` → Frontend Service
+
+```bash
+# Apply updated Ingress
+kubectl apply -f k8s/backend-ingress.yaml
+
+# Verify
+kubectl describe ingress backend-ingress
+```
+
+---
+
+## Application URLs
+
+### Azure Web App (Backend Only - Step 1)
 - **URL:** https://mindx-backend-08manh.azurewebsites.net
 - **Health:** https://mindx-backend-08manh.azurewebsites.net/health
 
-### AKS + Ingress (Step 3)
-- **URL:** http://20.44.193.144
-- **Health:** http://20.44.193.144/health
-- **Root:** http://20.44.193.144/
+### AKS Full-Stack (Steps 2-4) ✅ **CURRENT**
+**Public IP:** `20.44.193.144`
 
-**Note:** Both deployments are running simultaneously.
+**Frontend (React App):**
+- **URL:** http://20.44.193.144/
+
+**Backend API:**
+- **Health:** http://20.44.193.144/api/health → `{"status":"ok"}`
+- **Root:** http://20.44.193.144/api/ → `"Hello from Backend API!"`
+
+**Routing:**
+- All requests to `/api/*` are routed to the backend service
+- All other requests (including `/`) are routed to the frontend service
 
 ---
 
 ## Available Endpoints
 
-- **Health Check:** `GET /health` → `{"status":"ok"}`
-- **Hello World:** `GET /` → `{"message":"Hello from Azure!"}`
+### Backend API
+- **Health Check:** `GET /api/health` → `{"status":"ok"}`
+- **Hello World:** `GET /api/` → `"Hello from Backend API!"`
+
+### Frontend
+- **Web App:** `GET /` → React application
+- **Architecture Info:** Displays backend health and system architecture
+
+
+## Technologies Used
+
+**Frontend:**
+- React 18 + TypeScript
+- Vite (build tool)
+- Axios (HTTP client)
+- nginx (production server)
+
+**Backend:**
+- Node.js 18 + TypeScript
+- Express.js
+- CORS enabled
+
+**Infrastructure:**
+- Azure Kubernetes Service (AKS)
+- Azure Container Registry (ACR)
+- NGINX Ingress Controller
+- Docker multi-stage builds
 
 ## References
 
 - [Azure Documentation](https://docs.microsoft.com/azure)
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
 - [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/)
+- [React Documentation](https://react.dev/)
+- [Vite Documentation](https://vitejs.dev/)
 
+---
+
+**Week 1 Progress:** 4/6 steps completed (67%)
+
+**Next Steps:**
+- Step 5: Authentication (OpenID or Custom)
+- Step 6: HTTPS & SSL with custom domain

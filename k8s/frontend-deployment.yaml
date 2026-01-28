@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: frontend
   labels:
-    app: backend
+    app: frontend
 spec:
-  replicas: 2 #chạy 2 bản sao
+  replicas: 2
   selector:
     matchLabels:
-      app: backend
+      app: frontend
   template:
     metadata:
       labels:
-        app: backend
+        app: frontend
     spec:
       containers:
-      - name: backend
-        image: 08manhacr.azurecr.io/backend:latest  #docker image
+      - name: frontend
+        image: 08manhacr.azurecr.io/frontend:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 80
         resources:
           requests:
             memory: "128Mi"
@@ -28,14 +28,14 @@ spec:
             cpu: "200m"
         livenessProbe:
           httpGet:
-            path: /api/health
-            port: 3000
+            path: /
+            port: 80
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /api/health
-            port: 3000
+            path: /
+            port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
       imagePullSecrets:

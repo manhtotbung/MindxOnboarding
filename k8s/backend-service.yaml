@@ -5,8 +5,8 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: backend
+    app: backend #Chọn Pods nào để route traffic
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 3000
+    port: 80 #Port của Service
+    targetPort: 3000 #Port của Container
