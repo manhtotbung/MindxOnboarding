@@ -143,15 +143,85 @@ curl http://localhost:8080/health
 
 ---
 
+## Step 3: Ingress Controller Setup (External Access)
+
+### Prerequisites
+- Completed Step 2 (AKS deployment)
+- Helm installed locally
+- kubectl configured for AKS cluster
+
+### 3.1 Install NGINX Ingress Controller
+
+```bash
+# Add Helm repository
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+# Install NGINX Ingress Controller
+helm install nginx-ingress ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace
+
+# Verify installation
+kubectl get pods -n ingress-nginx
+kubectl get svc -n ingress-nginx
+```
+
+**Expected result:** LoadBalancer Service with EXTERNAL-IP (Public IP)
+
+### 3.2 Create & Apply Ingress Resource
+
+```bash
+# Apply Ingress configuration
+kubectl apply -f k8s/backend-ingress.yaml
+
+# Verify Ingress
+kubectl get ingress
+```
+
+### 3.3 Get Public IP
+
+```bash
+kubectl get svc -n ingress-nginx
+```
+
+Look for `EXTERNAL-IP` of `nginx-ingress-ingress-nginx-controller` service.
+
+### 3.4 Test External Access
+
+```bash
+# Test health endpoint
+curl http://<EXTERNAL-IP>/health
+
+# Expected response:
+# {"status":"ok"}
+```
+
+---
+
 ## API Endpoints
 
-- **Health Check:** `GET /health`
-- **Hello World:** `GET /`
+### Azure Web App (Step 1)
+- **URL:** https://mindx-backend-08manh.azurewebsites.net
+- **Health:** https://mindx-backend-08manh.azurewebsites.net/health
 
-### Live URLs
+### AKS + Ingress (Step 3)
+- **URL:** http://20.44.193.144
+- **Health:** http://20.44.193.144/health
+- **Root:** http://20.44.193.144/
 
-- **Azure Web App:** https://mindx-backend-08manh.azurewebsites.net
+**Note:** Both deployments are running simultaneously.
+
+---
+
+## Available Endpoints
+
+- **Health Check:** `GET /health` → `{"status":"ok"}`
+- **Hello World:** `GET /` → `{"message":"Hello from Azure!"}`
 
 ## References
 
 - [Azure Documentation](https://docs.microsoft.com/azure)
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
+- [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/)
+
