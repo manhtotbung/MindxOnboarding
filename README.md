@@ -89,6 +89,60 @@ az webapp create \
   --deployment-container-image-name <your-acr-name>.azurecr.io/backend:latest
 ```
 
+---
+
+## Deploy to Azure Kubernetes Service (AKS)
+
+### Prerequisites
+- Completed ACR setup above
+- kubectl installed
+- AKS cluster created
+
+### Step 1: Get AKS Credentials
+
+```bash
+az aks get-credentials --resource-group <your-resource-group> --name <your-aks-cluster>
+```
+
+### Step 2: Create ACR Secret
+
+```bash
+# Get ACR password
+az acr credential show --name <your-acr-name> --query "passwords[0].value" -o tsv
+
+# Create Kubernetes secret
+kubectl create secret docker-registry acr-secret \
+  --docker-server=<your-acr-name>.azurecr.io \
+  --docker-username=<your-acr-name> \
+  --docker-password=<password-from-above>
+```
+
+### Step 3: Deploy to AKS
+
+```bash
+# Deploy application
+kubectl apply -f k8s/backend-deployment.yaml
+
+# Deploy service
+kubectl apply -f k8s/backend-service.yaml
+```
+
+### Step 4: Verify Deployment
+
+```bash
+# Check pods
+kubectl get pods
+
+# Check service
+kubectl get svc backend
+
+# Test API (port-forward)
+kubectl port-forward svc/backend 8080:80
+curl http://localhost:8080/health
+```
+
+---
+
 ## API Endpoints
 
 - **Health Check:** `GET /health`
