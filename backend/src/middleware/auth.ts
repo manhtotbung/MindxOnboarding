@@ -7,10 +7,6 @@ export interface AuthRequest extends Request {
     user?: any;
 }
 
-// TODO: Update with actual OpenID configuration when credentials are available
-const GOOGLE_CLIENT_ID = process.env.OPENID_CLIENT_ID;
-const ISSUER = process.env.OPENID_ISSUER || 'https://id-dev.mindx.edu.vn';
-
 // Middleware to validate JWT
 export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
@@ -20,28 +16,52 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
         return res.status(401).json({ error: 'No token provided' });
     }
 
-    // Option 1: Verify using a static secret (if symmetric key is used - e.g. for testing)
+    // Verify using a static secret (if configured in .env)
     if (process.env.JWT_SECRET) {
+        // Try verifying with secret first
         jwt.verify(token, process.env.JWT_SECRET, (err: any, user: any) => {
-            if (err) return res.status(403).json({ error: 'Invalid token' });
-            req.user = user;
-            next();
+            if (!err) {
+                req.user = user;
+                next();
+                return;
+            }
+            // If secret verification fails (e.g. token is from MindX), fall through to JWKS
+            verifyJwks(req, res, next, token);
         });
         return;
     }
 
-    // Option 2: Verify using JWKS (standard OIDC - requires JWKS endpoint)
-    // We need to know the JWKS URI from the discovery endpoint
-    // For now, this is a placeholder. 
-    console.warn('JWT verification skipped (No JWT_SECRET provided). THIS IS FOR DEV ONLY.');
+    // Verify using JWKS (standard OIDC)
+    verifyJwks(req, res, next, token);
+};
 
-    // TEMPORARY: Decode without verification just to populate req.user 
-    // DO NOT USE IN PRODUCTION without verification
-    const decoded = jwt.decode(token);
-    if (decoded) {
-        req.user = decoded;
-        next();
-    } else {
-        res.status(403).json({ error: 'Invalid token format' });
+// Helper function for JWKS Verification
+const verifyJwks = (req: AuthRequest, res: Response, next: NextFunction, token: string) => {
+    const issuer = process.env.OPENID_ISSUER || 'https://id-dev.mindx.edu.vn';
+    const client = jwksRsa({
+        jwksUri: `${issuer}/jwks`,
+        cache: true,
+        rateLimit: true,
+    });
+
+    function getKey(header: any, callback: any) {
+        client.getSigningKey(header.kid, function (err, key) {
+            if (err) {
+                // If can't get the key (e.g. network error or invalid kid), fail
+                callback(err, null);
+                return;
+            }
+            const signingKey = key?.getPublicKey();
+            callback(null, signingKey);
+        });
     }
+
+    jwt.verify(token, getKey, { algorithms: ['RS256'] }, (err: any, user: any) => {
+        if (err) {
+            console.error('JWKS Verification failed:', err.message);
+            return res.status(403).json({ error: 'Invalid token' });
+        }
+        req.user = user;
+        next();
+    });
 };

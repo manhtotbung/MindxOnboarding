@@ -41,11 +41,7 @@ spec:
               key: OPENID_CLIENT_SECRET
         - name: OPENID_REDIRECT_URI
           value: "https://20.197.84.14.nip.io/api/auth/callback"
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: auth-secrets
-              key: JWT_SECRET
+
         - name: NODE_ENV
           value: "production"
         livenessProbe:
