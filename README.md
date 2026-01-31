@@ -80,24 +80,21 @@ npm run dev
 ```
 App: `http://localhost:5173`
 
-> [!IMPORTANT]
-> Local development uses the `/auth/callback` path as whitelisted by the Identity Provider for `localhost`.
-
 ---
 
 ## Production Deployment (Step 6)
 
-### Build & Push v3
+### Build & Push
 ```bash
 az acr login --name 08manhacr
 
 # Backend
-docker build -t 08manhacr.azurecr.io/backend:v3 ./backend
-docker push 08manhacr.azurecr.io/backend:v3
+docker build -t 08manhacr.azurecr.io/backend:v11 ./backend
+docker push 08manhacr.azurecr.io/backend:v11
 
 # Frontend
-docker build -t 08manhacr.azurecr.io/frontend:v3 ./frontend
-docker push 08manhacr.azurecr.io/frontend:v3
+docker build -t 08manhacr.azurecr.io/frontend:v11 ./frontend
+docker push 08manhacr.azurecr.io/frontend:v11
 ```
 
 ### Apply Kubernetes Config
@@ -105,6 +102,10 @@ docker push 08manhacr.azurecr.io/frontend:v3
 kubectl apply -f k8s/backend-deployment.yaml
 kubectl apply -f k8s/frontend-deployment.yaml
 kubectl apply -f k8s/app-ingress.yaml
+
+# Restart to pick up changes
+kubectl rollout restart deployment/backend
+kubectl rollout restart deployment/frontend
 ```
 
 ---
