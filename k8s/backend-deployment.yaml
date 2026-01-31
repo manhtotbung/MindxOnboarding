@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: 08manhacr.azurecr.io/backend:v11  #docker image
+        image: 08manhacr.azurecr.io/backend:v12  #docker image
         imagePullPolicy: Always
         ports:
         - containerPort: 3000

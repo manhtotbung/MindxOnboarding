@@ -13,8 +13,8 @@ Full-stack application with React frontend and Node.js API backend deployed to A
 ## Features Implemented
 
 - **Modern UI:** React 18 + Vite with Glassmorphism aesthetic and centered login flow.
-- **Robust API:** Node.js/TypeScript Express server with "Double Binding" auth routes.
-- **Authentication:** Integrated with **MindX OpenID Connect** IDP (`id-dev.mindx.edu.vn`).
+- **Robust API:** Node.js/TypeScript Express server with Modular Architecture (Routes/Controllers).
+- **Authentication:** Integrated with **MindX OpenID Connect** IDP (`id-dev.mindx.edu.vn`) using **Standard JWKS Verification** .
 - **Security:** Automated HTTPS using **cert-manager** and **Let's Encrypt**.
 - **DevOps:** Containerized with Docker, pushed to ACR, orchestrated with AKS.
 - **Routing:** Path-based routing via NGINX Ingress Controller (`/` for Web, `/api` for API).
@@ -38,8 +38,9 @@ Full-stack application with React frontend and Node.js API backend deployed to A
 Week01/
 ├── backend/                 # Node.js API Service
 │   ├── src/
-│   │   ├── index.ts        # Double-bind Auth Routes (/auth & /api/auth)
-│   │   └── middleware/     # JWT Validation
+│   │   ├── index.ts        # App Entry Point
+│   │   ├── routes/         # Modular Routes (auth, api)
+│   │   └── middleware/     # JWKS Auth Middleware
 │   ├── Dockerfile
 │   └── .env                # Local Env
 ├── frontend/                # React Web App
@@ -55,8 +56,7 @@ Week01/
 │   ├── frontend-deployment.yaml
 │   ├── app-ingress.yaml    # HTTPS + TLS + Path Routing
 │   └── cluster-issuer.yaml # Let's Encrypt Config
-├── chitiettask.md           # [BEST READ] Detailed troubleshooting log
-└── README.md
+├── README.md
 ```
 
 ---
@@ -82,22 +82,26 @@ App: `http://localhost:5173`
 
 ---
 
-## Production Deployment
+## Production Deployment 
 
-### Build & Push
+### 1. Login to Azure Registry
+> Important: You must login before pushing images.
 ```bash
 az acr login --name 08manhacr
+```
 
+### 2. Build & Push (Version v12)
+```bash
 # Backend
-docker build -t 08manhacr.azurecr.io/backend:v11 ./backend
-docker push 08manhacr.azurecr.io/backend:v11
+docker build -t 08manhacr.azurecr.io/backend:v12 ./backend
+docker push 08manhacr.azurecr.io/backend:v12
 
 # Frontend
 docker build -t 08manhacr.azurecr.io/frontend:v11 ./frontend
 docker push 08manhacr.azurecr.io/frontend:v11
 ```
 
-### Apply Kubernetes Config
+### 3. Apply Kubernetes Config
 ```bash
 kubectl apply -f k8s/backend-deployment.yaml
 kubectl apply -f k8s/frontend-deployment.yaml
