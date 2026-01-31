@@ -82,7 +82,7 @@ App: `http://localhost:5173`
 
 ---
 
-## Production Deployment (Step 6)
+## Production Deployment
 
 ### Build & Push
 ```bash
