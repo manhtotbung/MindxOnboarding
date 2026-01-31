@@ -28,11 +28,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const login = () => {
-        // Redirect to Backend Login Endpoint (Local: Port 3000)
-        // Ensure we hit /auth/login at the root, not /api/auth/login
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-        const baseUrl = apiUrl.replace(/\/api$/, ''); // Strip trailing /api if present
-        window.location.href = `${baseUrl}/auth/login`;
+        // 1. Get API URL from Vite environment
+        let apiUrl = import.meta.env.VITE_API_URL;
+
+        // 2. EMERGENCY FALLBACK: If build args failed and we are on Cloud but pointing to localhost
+        if (window.location.hostname !== 'localhost' && (!apiUrl || apiUrl.includes('localhost'))) {
+            apiUrl = `${window.location.origin}/api`;
+        }
+
+        if (!apiUrl) {
+            console.error('VITE_API_URL is missing. Check .env files.');
+            return;
+        }
+
+        // 3. CONSTRUCTION: Keep the /api prefix! 
+        // Ingress ONLY routes paths starting with /api to the backend.
+        const loginUrl = `${apiUrl}/auth/login`;
+
+        console.log('Redirecting to login:', loginUrl);
+        window.location.href = loginUrl;
     };
 
     const logout = () => {
