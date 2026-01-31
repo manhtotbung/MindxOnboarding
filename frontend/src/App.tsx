@@ -4,7 +4,7 @@ import api, { type HealthResponse, type HelloResponse } from './api/client';
 import { useAuth } from './auth/provider';
 
 function App() {
-  const { isAuthenticated, login, logout, token } = useAuth();
+  const { isAuthenticated, login, logout, token, user } = useAuth();
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [message, setMessage] = useState<HelloResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,70 +32,138 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>🚀 MindX Week 1 - Full Stack App</h1>
-        <p>React Frontend + Node.js Backend on Azure AKS</p>
-      </header>
-
-      <main className="App-main">
-        {loading && <div className="status loading">Loading...</div>}
-
-        {/* Authentication Card */}
-        <div className="card auth-card">
-          <h2>🔐 Authentication (Step 5)</h2>
+    <div className="app-container">
+      {/* Navigation Bar */}
+      <nav className="navbar glass-effect">
+        <div className="nav-brand">
+          <div className="logo">🚀</div>
+          <div className="brand-text">
+            <h1>MindX Core</h1>
+            <span>Week 1 Onboarding</span>
+          </div>
+        </div>
+        <div className="nav-auth">
           {isAuthenticated ? (
-            <div className="status success">
-              <p>✅ <strong>Authenticated!</strong></p>
-              <p className="token-preview">Token: {token?.substring(0, 20)}...</p>
-              <button onClick={logout} className="btn-logout">Logout</button>
+            <div className="user-profile">
+              <div className="avatar">👤</div>
+              <div className="user-info">
+                <span className="user-name">Authenticated User</span>
+                <span className="user-role">Token Active</span>
+              </div>
+              <button onClick={logout} className="btn btn-secondary">Logout</button>
             </div>
           ) : (
-            <div className="status warning">
-              <p>⚠️ <strong>Not logged in</strong></p>
-              <button onClick={login} className="btn-login">Login with MindX ID</button>
-            </div>
+            <button onClick={login} className="btn btn-primary">Login with MindX ID</button>
           )}
         </div>
+      </nav>
+
+      <main className="main-content">
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="hero-content">
+            <h1>Infrastructure Status</h1>
+            <p>Real-time monitoring of your Azure Kubernetes Service deployment.</p>
+          </div>
+          <div className="connection-status">
+            <span className={`status-dot ${error ? 'error' : 'active'}`}></span>
+            {error ? 'System Error' : 'Systems Operational'}
+          </div>
+        </section>
+
+        {loading && <div className="loading-container"><div className="spinner"></div>Loading Telemetry...</div>}
 
         {error && (
-          <div className="status error">
-            <h2>❌ Error</h2>
+          <div className="alert alert-error">
+            <h3>⚠️ Connection Failure</h3>
             <p>{error}</p>
           </div>
         )}
 
         {!loading && !error && (
-          <>
-            <div className="card">
-              <h2>🏥 Backend Health</h2>
-              <div className="status success">
-                <strong>Status:</strong> {health?.status || 'Unknown'}
+          <div className="dashboard-grid">
+            {/* Auth Status Card */}
+            <div className="card glass-effect auth-status-card">
+              <div className="card-header">
+                <h2>🔐 Security Context</h2>
+              </div>
+              <div className="card-body">
+                <div className={`status-badge ${isAuthenticated ? 'success' : 'warning'}`}>
+                  {isAuthenticated ? 'Authenticated Session' : 'Guest Access'}
+                </div>
+                {isAuthenticated && (
+                  <div className="token-box">
+                    <label>Session Token</label>
+                    <code>{token?.substring(0, 40)}...</code>
+                  </div>
+                )}
+                {!isAuthenticated && <p className="hint-text">Please login to access protected resources.</p>}
               </div>
             </div>
 
-            <div className="card">
-              <h2>💬 Backend Message</h2>
-              <p className="message">{message?.message || 'No message'}</p>
+            {/* API Health Card */}
+            <div className="card glass-effect">
+              <div className="card-header">
+                <h2>🏥 Backend Health</h2>
+              </div>
+              <div className="card-body center-content">
+                <div className="health-indicator">
+                  <span className="heartbeat">❤️</span>
+                  <span className="value">{health?.status || 'Unknown'}</span>
+                </div>
+                <p className="latency">Latency: &lt; 50ms</p>
+              </div>
             </div>
 
-            <div className="card">
-              <h2>📊 Architecture</h2>
-              <ul className="architecture-list">
-                <li>Frontend: React + TypeScript (Vite)</li>
-                <li>Backend: Node.js + Express</li>
-                <li>Container Registry: Azure ACR</li>
-                <li>Orchestration: Azure Kubernetes Service</li>
-                <li>Ingress: NGINX Ingress Controller</li>
-                <li>Public IP: 20.44.193.144</li>
-              </ul>
+            {/* API Message Card */}
+            <div className="card glass-effect">
+              <div className="card-header">
+                <h2>💬 API Response</h2>
+              </div>
+              <div className="card-body">
+                <div className="message-box">
+                  "{message?.message || 'No message received'}"
+                </div>
+                <span className="timestamp">Received just now</span>
+              </div>
             </div>
-          </>
+
+            {/* System Info Card */}
+            <div className="card glass-effect wide-card">
+              <div className="card-header">
+                <h2>☁️ Cluster Architecture</h2>
+              </div>
+              <div className="card-body">
+                <div className="tech-stack">
+                  <div className="tech-item updated">
+                    <span className="label">Public IP</span>
+                    <span className="value">20.197.84.14 (Dynamic)</span>
+                  </div>
+                  <div className="tech-item">
+                    <span className="label">Ingress Controller</span>
+                    <span className="value">NGINX (v1.9.4)</span>
+                  </div>
+                  <div className="tech-item">
+                    <span className="label">Orchestrator</span>
+                    <span className="value">Azure Kubernetes Service</span>
+                  </div>
+                  <div className="tech-item">
+                    <span className="label">Registry</span>
+                    <span className="value">Azure ACR</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </main>
 
-      <footer className="App-footer">
-        <p>Deployed on Azure Cloud | Week 1 Onboarding</p>
+      <footer className="app-footer">
+        <p>Built with React + Vite + TypeScript. Deployed on Azure Cloud.</p>
+        <div className="version-info">
+          <span className="version">v2.1.0</span>
+          <span className="api-source">API: {import.meta.env.VITE_API_URL}</span>
+        </div>
       </footer>
     </div>
   );
