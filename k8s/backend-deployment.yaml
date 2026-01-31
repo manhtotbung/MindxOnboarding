@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: 08manhacr.azurecr.io/backend:latest  #docker image
+        image: 08manhacr.azurecr.io/backend:v6  #docker image
         ports:
         - containerPort: 3000
         resources:
@@ -26,6 +26,27 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
+        env:
+        - name: PORT
+          value: "3000"
+        - name: OPENID_ISSUER
+          value: "https://id-dev.mindx.edu.vn"
+        - name: OPENID_CLIENT_ID
+          value: "mindx-onboarding"
+        - name: OPENID_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: auth-secrets
+              key: OPENID_CLIENT_SECRET
+        - name: OPENID_REDIRECT_URI
+          value: "https://20.197.84.14.nip.io/api/auth/callback"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: auth-secrets
+              key: JWT_SECRET
+        - name: NODE_ENV
+          value: "production"
         livenessProbe:
           httpGet:
             path: /api/health

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: 08manhacr.azurecr.io/frontend:latest
+        image: 08manhacr.azurecr.io/frontend:v7
         ports:
         - containerPort: 80
         resources:

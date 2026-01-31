@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import api, { type HealthResponse, type HelloResponse } from './api/client';
+import { useAuth } from './auth/provider';
 
 function App() {
+  const { isAuthenticated, login, logout, token } = useAuth();
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [message, setMessage] = useState<HelloResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,6 +40,23 @@ function App() {
 
       <main className="App-main">
         {loading && <div className="status loading">Loading...</div>}
+
+        {/* Authentication Card */}
+        <div className="card auth-card">
+          <h2>🔐 Authentication (Step 5)</h2>
+          {isAuthenticated ? (
+            <div className="status success">
+              <p>✅ <strong>Authenticated!</strong></p>
+              <p className="token-preview">Token: {token?.substring(0, 20)}...</p>
+              <button onClick={logout} className="btn-logout">Logout</button>
+            </div>
+          ) : (
+            <div className="status warning">
+              <p>⚠️ <strong>Not logged in</strong></p>
+              <button onClick={login} className="btn-login">Login with MindX ID</button>
+            </div>
+          )}
+        </div>
 
         {error && (
           <div className="status error">

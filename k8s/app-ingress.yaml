@@ -2,10 +2,18 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: backend-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - 20.197.84.14.nip.io
+    secretName: app-tls-secret
   rules:
-  - http:
+  - host: 20.197.84.14.nip.io
+    http:
       paths:
       - path: /api
         pathType: Prefix
