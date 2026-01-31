@@ -36,7 +36,7 @@ function App() {
       {/* Navigation Bar */}
       <nav className="navbar glass-effect">
         <div className="nav-brand">
-          <div className="logo">🚀</div>
+          <div className="logo"></div>
           <div className="brand-text">
             <h1>MindX Core</h1>
             <span>Week 1 Onboarding</span>
@@ -47,29 +47,39 @@ function App() {
             <div className="user-profile">
               <div className="avatar">👤</div>
               <div className="user-info">
-                <span className="user-name">Authenticated User</span>
+                <span className="user-name">{user?.name || 'Authenticated User'}</span>
                 <span className="user-role">Token Active</span>
               </div>
               <button onClick={logout} className="btn btn-secondary">Logout</button>
             </div>
-          ) : (
-            <button onClick={login} className="btn btn-primary">Login with MindX ID</button>
-          )}
+          ) : null}
         </div>
       </nav>
 
       <main className="main-content">
-        {/* Hero Section */}
-        <section className="hero-section">
-          <div className="hero-content">
-            <h1>Infrastructure Status</h1>
-            <p>Real-time monitoring of your Azure Kubernetes Service deployment.</p>
+        {!loading && !error && !isAuthenticated && (
+          <div className="login-view-centered glass-effect">
+            <h2>Welcome to MindX Core</h2>
+            <p>Please log in with your MindX Identity Account to access deployment telemetry and cluster management tools.</p>
+            <button onClick={login} className="btn btn-primary btn-large">
+              <span>🔐</span> Login with MindX ID
+            </button>
           </div>
-          <div className="connection-status">
-            <span className={`status-dot ${error ? 'error' : 'active'}`}></span>
-            {error ? 'System Error' : 'Systems Operational'}
-          </div>
-        </section>
+        )}
+
+        {/* Hero Section - Only show when authenticated */}
+        {isAuthenticated && (
+          <section className="hero-section">
+            <div className="hero-content">
+              <h1>Infrastructure Status</h1>
+              <p>Real-time monitoring of your Azure Kubernetes Service deployment.</p>
+            </div>
+            <div className="connection-status">
+              <span className={`status-dot ${error ? 'error' : 'active'}`}></span>
+              {error ? 'System Error' : 'Systems Operational'}
+            </div>
+          </section>
+        )}
 
         {loading && <div className="loading-container"><div className="spinner"></div>Loading Telemetry...</div>}
 
@@ -80,7 +90,7 @@ function App() {
           </div>
         )}
 
-        {!loading && !error && (
+        {!loading && !error && isAuthenticated && (
           <div className="dashboard-grid">
             {/* Auth Status Card */}
             <div className="card glass-effect auth-status-card">
@@ -88,16 +98,15 @@ function App() {
                 <h2>🔐 Security Context</h2>
               </div>
               <div className="card-body">
-                <div className={`status-badge ${isAuthenticated ? 'success' : 'warning'}`}>
-                  {isAuthenticated ? 'Authenticated Session' : 'Guest Access'}
+                <div className={`status-badge success`}>
+                  Authenticated Session
                 </div>
-                {isAuthenticated && (
+                {token && (
                   <div className="token-box">
                     <label>Session Token</label>
-                    <code>{token?.substring(0, 40)}...</code>
+                    <code>{token.substring(0, 40)}...</code>
                   </div>
                 )}
-                {!isAuthenticated && <p className="hint-text">Please login to access protected resources.</p>}
               </div>
             </div>
 

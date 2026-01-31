@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface AuthContextType {
     isAuthenticated: boolean;
     token: string | null;
+    user: { name: string } | null;
     login: () => void;
     logout: () => void;
 }
@@ -28,8 +29,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = () => {
         // Redirect to Backend Login Endpoint (Local: Port 3000)
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-        window.location.href = `${apiUrl}/api/auth/login`;
+        // Ensure we hit /auth/login at the root, not /api/auth/login
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+        const baseUrl = apiUrl.replace(/\/api$/, ''); // Strip trailing /api if present
+        window.location.href = `${baseUrl}/auth/login`;
     };
 
     const logout = () => {
@@ -38,8 +41,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         window.location.href = '/';
     };
 
+    // Simple mock user object based on token presence
+    const user = token ? { name: 'MindX Student' } : null;
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated: !!token, token, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated: !!token, token, user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

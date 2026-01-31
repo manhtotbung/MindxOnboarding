@@ -18,9 +18,12 @@ app.get('/api/', (req: Request, res: Response) => {
 import { authenticateToken, AuthRequest } from './middleware/auth';
 
 // 1. Login Endpoint - Redirects to OpenID Provider
-app.get('/api/auth/login', (req: Request, res: Response) => {
+// Support both /auth and /api/auth paths for flexibility
+const loginPaths = ['/auth/login', '/api/auth/login'];
+app.get(loginPaths, (req: Request, res: Response) => {
     const clientId = process.env.OPENID_CLIENT_ID || 'PLACEHOLDER_ID';
-    const redirectUri = process.env.OPENID_REDIRECT_URI || 'http://localhost:3000/api/auth/callback';
+    // Use the configured URI from env, which dictates which cleanup path we expect
+    const redirectUri = process.env.OPENID_REDIRECT_URI || 'http://localhost:3000/auth/callback';
     const issuer = process.env.OPENID_ISSUER || 'https://id-dev.mindx.edu.vn';
 
     // Construct Authorization URL
@@ -34,7 +37,9 @@ app.get('/api/auth/login', (req: Request, res: Response) => {
 // 2. Callback Endpoint - Handles the code from OpenID Provider
 import axios from 'axios';
 
-app.get('/api/auth/callback', async (req: Request, res: Response) => {
+// Support both /auth and /api/auth paths for callback
+const callbackPaths = ['/auth/callback', '/api/auth/callback'];
+app.get(callbackPaths, async (req: Request, res: Response) => {
     const { code } = req.query;
 
     if (!code) {
