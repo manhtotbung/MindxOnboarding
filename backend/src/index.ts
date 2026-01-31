@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import axios from 'axios';
+import { authenticateToken, AuthRequest } from './middleware/auth';
 
 dotenv.config();
 
@@ -11,12 +13,10 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/api/', (req: Request, res: Response) => {
-    res.send('Hello from Backend API!');
+    res.json({ message: 'Hello from Backend API!' });
 });
 
 // --- AUTHENTICATION ROUTES (Placeholder) ---
-import { authenticateToken, AuthRequest } from './middleware/auth';
-
 // 1. Login Endpoint - Redirects to OpenID Provider
 // Support both /auth and /api/auth paths for flexibility
 const loginPaths = ['/auth/login', '/api/auth/login'];
@@ -35,8 +35,6 @@ app.get(loginPaths, (req: Request, res: Response) => {
 });
 
 // 2. Callback Endpoint - Handles the code from OpenID Provider
-import axios from 'axios';
-
 // Support both /auth and /api/auth paths for callback
 const callbackPaths = ['/auth/callback', '/api/auth/callback'];
 app.get(callbackPaths, async (req: Request, res: Response) => {

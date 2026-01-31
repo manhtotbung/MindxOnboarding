@@ -60,7 +60,7 @@ function App() {
         {!loading && !error && !isAuthenticated && (
           <div className="login-view-centered glass-effect">
             <h2>Welcome to MindX Core</h2>
-            <p>Please log in with your MindX Identity Account to access deployment telemetry and cluster management tools.</p>
+            <p>Please log in with your MindX Identity Account.</p>
             <button onClick={login} className="btn btn-primary btn-large">
               <span>🔐</span> Login with MindX ID
             </button>
@@ -71,8 +71,7 @@ function App() {
         {isAuthenticated && (
           <section className="hero-section">
             <div className="hero-content">
-              <h1>Infrastructure Status</h1>
-              <p>Real-time monitoring of your Azure Kubernetes Service deployment.</p>
+              <h1>Status</h1>
             </div>
             <div className="connection-status">
               <span className={`status-dot ${error ? 'error' : 'active'}`}></span>
