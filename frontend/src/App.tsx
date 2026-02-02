@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ReactGA from "react-ga4";
 import './App.css';
 import api, { type HealthResponse, type HelloResponse } from './api/client';
 import { useAuth } from './auth/provider';
@@ -28,6 +29,10 @@ function App() {
       }
     };
 
+
+    // Track page view on mount
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+
     fetchData();
   }, []);
 
@@ -50,7 +55,10 @@ function App() {
                 <span className="user-name">{user?.name || 'Authenticated User'}</span>
                 <span className="user-role">Token Active</span>
               </div>
-              <button onClick={logout} className="btn btn-secondary">Logout</button>
+              <button onClick={() => {
+                ReactGA.event({ category: "Auth", action: "Click Logout Button" });
+                logout();
+              }} className="btn btn-secondary">Logout</button>
             </div>
           ) : null}
         </div>
@@ -61,7 +69,10 @@ function App() {
           <div className="login-view-centered glass-effect">
             <h2>Welcome to MindX Core</h2>
             <p>Please log in with your MindX Identity Account.</p>
-            <button onClick={login} className="btn btn-primary btn-large">
+            <button onClick={() => {
+              ReactGA.event({ category: "Auth", action: "Click Login Button" });
+              login();
+            }} className="btn btn-primary btn-large">
               <span>🔐</span> Login with MindX ID
             </button>
           </div>
