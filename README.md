@@ -2,26 +2,6 @@
 
 A comprehensive Full-stack application designed to demonstrate Cloud Native engineering practices. This project evolves weekly, adding production-grade features such as Kubernetes orchestration, OIDC Authentication, and advanced Monitoring.
 
-**Current Status:** `Week 1 Complete` | `Week 2 Ready`
-
-## Project Roadmap
-
-This project is built in iterative stages (Weeks):
-
-- [x] **Week 1: Foundations**
-  - Architecture Design & Containerization
-  - Deployment to Azure Kubernetes Service (AKS)
-  - Ingress Controller & Automated HTTPS (cert-manager)
-  - OIDC Authentication with MindX IDP
-- [ ] **Week 2: Observability & Monitoring**
-  - Frontend Analytics (Google Analytics 4)
-  - Backend Telemetry (Azure Application Insights)
-  - Logging & Alerts
-- [ ] **Week 3: CI/CD & Automation**
-  - (Upcoming...)
-
----
-
 ## Features
 
 - **Modern UI:** React 18 + Vite with Glassmorphism aesthetic.
