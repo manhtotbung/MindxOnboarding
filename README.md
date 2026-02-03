@@ -40,11 +40,12 @@ This project is built in iterative stages (Weeks):
 - **Ingress:** NGINX Ingress Controller
 - **SSL:** cert-manager + Let's Encrypt (HTTP-01 Challenge)
 
-> **Documentation:**
-> *   [Setup & Authentication Guide](docs/setup_and_auth_guide.md) - **Read this for detailed Auth Flow.**
+## Documentation
+
+For detailed instructions on setup, deployment, and a deep dive into the **Authentication Flow**, please refer to:
+- [Setup & Authentication Guide](docs/setup_and_auth_guide.md)
 
 ---
-
 ## Quick Start (Local Development)
 
 ### 1. Backend
@@ -89,13 +90,3 @@ kubectl rollout restart deployment/frontend
 
 ---
 
-## Project Structure
-```text
-.
-├── backend/                 # API Service
-├── frontend/                # React Web App
-├── k8s/                     # Kubernetes Manifests
-├── docs/                    # Detailed Documentation
-├── mindx-engineer-onboarding/ # Course Materials
-└── README.md                # This file
-```
