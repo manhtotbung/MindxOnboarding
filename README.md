@@ -44,6 +44,7 @@ This project is built in iterative stages (Weeks):
 
 For detailed instructions on setup, deployment, and a deep dive into the **Authentication Flow**, please refer to:
 - [Setup & Authentication Guide](docs/setup_and_auth_guide.md)
+- [Week 2: Observability & Metrics Guide](docs/week02_metrics.md)
 
 ---
 ## Quick Start (Local Development)
