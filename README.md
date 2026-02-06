@@ -7,6 +7,7 @@ A comprehensive Full-stack application designed to demonstrate Cloud Native engi
 - **Modern UI:** React 18 + Vite with Glassmorphism aesthetic.
 - **Robust API:** Node.js/TypeScript Express server with Modular Architecture.
 - **Secure Auth:** Integrated OpenID Connect with automatic token validation (JWKS).
+- **Observability:** Complete monitoring stack with Azure App Insights (Backend) and Google Analytics 4 (Frontend).
 - **Infrastructure:** Fully automated deployment on Azure Cloud using Kubernetes.
 
 ---
@@ -19,11 +20,12 @@ A comprehensive Full-stack application designed to demonstrate Cloud Native engi
 - **Orchestration:** Azure Kubernetes Service (AKS)
 - **Ingress:** NGINX Ingress Controller
 - **SSL:** cert-manager + Let's Encrypt (HTTP-01 Challenge)
+- **Monitoring:** Azure Application Insights + Google Analytics 4
 
 ## Documentation
 
-For detailed instructions on setup, deployment, and a deep dive into the **Authentication Flow**, please refer to:
-- [Setup & Authentication Guide](docs/setup_and_auth_guide.md)
+For detailed instructions on setup, deployment, authentication flows, and observability configuration, please refer to the following milestone guides:
+- [Week 1: Setup & Authentication Guide](docs/setup_and_auth_guide.md)
 - [Week 2: Observability & Metrics Guide](docs/week02_metrics.md)
 
 ---
@@ -53,9 +55,9 @@ npm run dev
 ```bash
 az acr login --name 08manhacr
 
-# Backend
-docker build -t 08manhacr.azurecr.io/backend:v12 ./backend
-docker push 08manhacr.azurecr.io/backend:v12
+# Backend (Latest Stable)
+docker build -t 08manhacr.azurecr.io/backend:v14 ./backend
+docker push 08manhacr.azurecr.io/backend:v14
 
 # Frontend
 docker build -t 08manhacr.azurecr.io/frontend:v11 ./frontend

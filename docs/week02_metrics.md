@@ -20,10 +20,18 @@ To track user engagement, session duration, and specific interactions (Login/Log
 | **Click Login Button** | Custom Event | User clicks "Login with MindX ID". <br> `Category: Auth` |
 | **Click Logout Button** | Custom Event | User clicks "Logout" in the nav bar. <br> `Category: Auth` |
 
+### How to Access Dashboard
+1.  Go to [analytics.google.com](https://analytics.google.com/)
+2.  Select your property (e.g., `MindX Onboarding App`).
+3.  Navigate to **Reports** -> **Realtime** to see live user activity.
+
+![Google Analytics 4 Realtime Dashboard](./assets/ga4-dashboard.png)
+*Figure 1: Example of GA4 Realtime Dashboard showing active users and event counts.*
+
 ### How to Verify
 1.  Open the application with the console open.
 2.  Verify `GA Initialized with ID: ...` message on startup.
-3.  Use **Google Analytics Debugger** extension or check the **Realtime Overview** on the GA4 Dashboard.
+3.  Trigger an event (e.g., click "Login") and check the Realtime dashboard to see the event appear.
 
 ---
 
@@ -44,10 +52,18 @@ To monitor backend API health, request latency, failure rates, and server-side e
 - **Failure Rate:** Percentage of 5xx errors or crashed processes.
 - **Exceptions:** Stack traces of unhandled errors.
 
+### How to Access Dashboard
+1.  Log in to [portal.azure.com](https://portal.azure.com/).
+2.  Search for and select your **Application Insights** resource (e.g., `Backend-Metrics`).
+3.  By default, the **Overview** blade shows key metrics. You can also click **Live Metrics** under *Investigate* for real-time data.
+
+![Azure Application Insights Dashboard](./assets/azure-app-insights.png)
+*Figure 2: Example of Azure Application Insights Dashboard (Overview or Live Metrics).*
+
 ### How to Verify
 1.  Navigate to the **Application Insights** resource in Azure Portal.
-2.  Go to **Live Metrics** to see real-time streaming data.
-3.  Go to **Transaction Search** to find specific request logs.
+2.  Check the **Overview** charts or open **Live Metrics** to see usage data.
+3.  Go to **Transaction Search** to query for specific request logs or exceptions.
 
 ---
 

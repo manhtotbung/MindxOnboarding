@@ -1,3 +1,7 @@
+import crypto from 'crypto';
+// Polyfill crypto for App Insights
+(global as any).crypto = crypto;
+
 import * as appInsights from 'applicationinsights';
 import express from 'express';
 import cors from 'cors';
