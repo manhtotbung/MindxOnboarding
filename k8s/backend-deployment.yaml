@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: 08manhacr.azurecr.io/backend:v12  #docker image
+        image: 08manhacr.azurecr.io/backend:v13  #docker image
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
@@ -44,6 +44,11 @@ spec:
 
         - name: NODE_ENV
           value: "production"
+        - name: APPINSIGHTS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: APPINSIGHTS_CONNECTION_STRING
         livenessProbe:
           httpGet:
             path: /api/health

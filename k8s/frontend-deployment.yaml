@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: 08manhacr.azurecr.io/frontend:v11
+        image: 08manhacr.azurecr.io/frontend:v12
         imagePullPolicy: Always
         ports:
         - containerPort: 80
